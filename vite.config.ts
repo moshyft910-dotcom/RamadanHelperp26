@@ -4,9 +4,8 @@ import react from '@vitejs/plugin-react';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  // This is crucial for Electron and GitHub Pages. 
-  // It ensures assets are loaded with relative paths (e.g., "./assets/...") 
-  // instead of absolute paths (e.g., "/assets/...").
+  // Use relative base path to support deployment on GitHub Pages
+  // and ensure assets load correctly in any subdirectory.
   base: './', 
   build: {
     outDir: 'dist',

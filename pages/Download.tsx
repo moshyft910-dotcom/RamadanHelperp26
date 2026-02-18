@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Download, Monitor, Smartphone, Share, PlusSquare, Apple } from 'lucide-react';
+import { Download, Monitor, Smartphone, Share, PlusSquare, Apple, Chrome } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const DownloadPage: React.FC = () => {
@@ -7,12 +7,18 @@ const DownloadPage: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isAndroid, setIsAndroid] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
     // Check Platform
     const userAgent = window.navigator.userAgent.toLowerCase();
     setIsIOS(/iphone|ipad|ipod/.test(userAgent));
     setIsAndroid(/android/.test(userAgent));
+
+    // Check if already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true);
+    }
 
     // Listen for PWA install prompt
     const handleBeforeInstallPrompt = (e: any) => {
@@ -41,30 +47,42 @@ const DownloadPage: React.FC = () => {
     <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
       <div className="text-center mb-10">
         <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 font-serif">
-          حمل التطبيق الآن
+          تثبيت التطبيق
         </h2>
         <p className="text-slate-400 text-lg">
-          استمتع بتجربة إيمانية متكاملة على جميع أجهزتك
+          استمتع بتجربة إيمانية متكاملة وتطبيق سريع يعمل بدون إنترنت
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Windows */}
-        <div className="glass-panel p-8 rounded-3xl border border-slate-700 hover:border-gold-500/50 transition-all group text-center relative overflow-hidden">
+        {/* Windows / Desktop PWA */}
+        <div className="glass-panel p-8 rounded-3xl border border-slate-700 hover:border-blue-500/50 transition-all group text-center relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
           
           <div className="w-20 h-20 bg-slate-800 rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform">
             <Monitor size={40} className="text-blue-400" />
           </div>
           
-          <h3 className="text-2xl font-bold text-white mb-2">Windows</h3>
-          <p className="text-sm text-slate-400 mb-8">نسخة سطح المكتب الكاملة مع ميزة الأذان التلقائي</p>
+          <h3 className="text-2xl font-bold text-white mb-2">Windows / Mac</h3>
+          <p className="text-sm text-slate-400 mb-8">تثبيت عبر المتصفح (Chrome/Edge)</p>
           
-          <button className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20">
-            <Download size={20} />
-            <span>تحميل .EXE</span>
-          </button>
-          <p className="text-[10px] text-slate-500 mt-3">الإصدار 1.0.0 (64-bit)</p>
+          {deferredPrompt ? (
+            <button 
+              onClick={handleInstallClick}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+            >
+              <Download size={20} />
+              <span>تثبيت الآن</span>
+            </button>
+          ) : (
+            <div className="bg-slate-800/50 p-4 rounded-xl text-sm text-slate-300 border border-slate-700 flex flex-col gap-2">
+               <div className="flex items-center gap-2 justify-center text-blue-300 font-bold">
+                 <Chrome size={16} />
+                 <span>طريقة التثبيت:</span>
+               </div>
+               <p>اضغط على أيقونة "تثبيت" <Download size={12} className="inline mx-1"/> في شريط العنوان أعلى المتصفح.</p>
+            </div>
+          )}
         </div>
 
         {/* Android */}
@@ -76,7 +94,7 @@ const DownloadPage: React.FC = () => {
           </div>
 
           <h3 className="text-2xl font-bold text-white mb-2">Android</h3>
-          <p className="text-sm text-slate-400 mb-8">تثبيت مباشر بدون متجر تطبيقات (PWA)</p>
+          <p className="text-sm text-slate-400 mb-8">تثبيت مباشر (PWA)</p>
 
           {deferredPrompt ? (
             <button 
